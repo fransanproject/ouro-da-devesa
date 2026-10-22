@@ -128,7 +128,8 @@ body{overflow-x:clip}
   .beat h1{font-size:34px}
   .brand-row{gap:12px}
   .logo-badge{width:56px}
-  .scrub2-text{width:94vw;padding:0 16px}
+  .scrub2-text{top:calc(56.25vw + 30px);transform:none;width:100%;padding:0 24px;text-align:center}
+  .scrub2-text p{margin-left:auto;margin-right:auto}
   .scrollhint{margin-top:18px}
 }
 .vbadge{position:fixed;right:10px;bottom:10px;z-index:60;background:rgba(11,9,6,.7);border:1px solid var(--line);color:var(--gold2);font-size:11px;padding:3px 9px;border-radius:999px}
@@ -136,7 +137,7 @@ body{overflow-x:clip}
 </head>
 <body>
 <script>
-(function(){ var V='v13';
+(function(){ var V='v14';
   fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function(r){ return r.text(); }).then(function(t){
     t = (t || '').trim(); if (!t || t === V) return;
     var seen = ''; try { seen = sessionStorage.getItem('od_vc') || ''; } catch(_){}
@@ -346,15 +347,12 @@ function fit(){ const d = Math.min(devicePixelRatio || 1, 2); canvas.width = Mat
 function draw(n){ const img = imgs[n]; if (!img || !img.complete || !img.naturalWidth) return;
   const iw = img.naturalWidth, ih = img.naturalHeight, cw = canvas.width, ch = canvas.height;
   const p = n / (COUNT - 1);
-  let t = (p - .50) / .32; t = Math.max(0, Math.min(1, t)); t = t * t * (3 - 2 * t);
-  const sc = Math.max(cw / iw, ch / ih), sn = Math.min(cw / iw, ch / ih);
-  const s = sc + (sn - sc) * t;
-  ctx.fillStyle = '#070503'; ctx.fillRect(0, 0, cw, ch);
-  ctx.drawImage(img, (cw - iw * s) / 2, (ch - ih * s) / 2, iw * s, ih * s);
+  const sc = Math.max(cw / iw, ch / ih);
+  ctx.drawImage(img, (cw - iw * sc) / 2, (ch - ih * sc) / 2, iw * sc, ih * sc);
   current = n;
   beats.forEach((el, b) => { const on = (b === 0 && p < .25) || (b === 1 && p >= .25 && p < .52) || (b === 2 && p >= .52 && p < .80) || (b === 3 && p >= .80); el.classList.toggle('on', on); });
 }
-const STOPS = [[0,0],[.20,.05],[.28,.16],[.50,.48],[.58,.66],[.80,.80],[.86,1],[1,1]];
+const STOPS = [[0,0],[.20,.05],[.28,.16],[.50,.48],[.58,.66],[.80,.80],[1,1]];
 function mapP(p){ for (let i = 1; i < STOPS.length; i++){ if (p <= STOPS[i][0]){ const a = STOPS[i-1], b = STOPS[i]; return a[1] + (b[1]-a[1]) * ((p - a[0]) / (b[0]-a[0])); } } return 1; }
 const stage = document.querySelector('.hero-stage');
 const layer = document.querySelector('.hero-texts');
@@ -385,7 +383,7 @@ document.getElementById('pedidoForm').addEventListener('submit', function(e){ e.
   const red2 = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let cur2 = -1, tgt2 = 0, sh2 = 0;
   function fit2(){ const d = Math.min(devicePixelRatio || 1, 2); can.width = Math.round(innerWidth * d); can.height = Math.round(innerHeight * d); cur2 = -1; }
-  function draw2(n){ const im = im2[n]; if (!im || !im.complete || !im.naturalWidth) return; const s = Math.min(can.width / im.naturalWidth, can.height / im.naturalHeight); cx2.fillStyle = '#000'; cx2.fillRect(0, 0, can.width, can.height); cx2.drawImage(im, (can.width - im.naturalWidth * s) / 2, (can.height - im.naturalHeight * s) / 2, im.naturalWidth * s, im.naturalHeight * s); cur2 = n; }
+  function draw2(n){ const im = im2[n]; if (!im || !im.complete || !im.naturalWidth) return; const s = Math.min(can.width / im.naturalWidth, can.height / im.naturalHeight); cx2.fillStyle = '#000'; cx2.fillRect(0, 0, can.width, can.height); cx2.drawImage(im, (can.width - im.naturalWidth * s) / 2, (can.height - im.naturalHeight * s) * (innerWidth <= 560 ? 0 : .5), im.naturalWidth * s, im.naturalHeight * s); cur2 = n; }
   function meas2(){ if (red2){ tgt2 = Math.round((N2 - 1) * .5); if (txt) txt.style.opacity = 1; return; }
     const r = sec.getBoundingClientRect(); const total = r.height - innerHeight;
     const off = Math.min(Math.max(-r.top, 0), Math.max(total, 0));
