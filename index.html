@@ -136,7 +136,7 @@ body{overflow-x:clip}
 </head>
 <body>
 <script>
-(function(){ var V='v12';
+(function(){ var V='v13';
   fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then(function(r){ return r.text(); }).then(function(t){
     t = (t || '').trim(); if (!t || t === V) return;
     var seen = ''; try { seen = sessionStorage.getItem('od_vc') || ''; } catch(_){}
@@ -346,16 +346,11 @@ function fit(){ const d = Math.min(devicePixelRatio || 1, 2); canvas.width = Mat
 function draw(n){ const img = imgs[n]; if (!img || !img.complete || !img.naturalWidth) return;
   const iw = img.naturalWidth, ih = img.naturalHeight, cw = canvas.width, ch = canvas.height;
   const p = n / (COUNT - 1);
-  let t = (p - .84) / .13; t = Math.max(0, Math.min(1, t)); t = t * t * (3 - 2 * t);
+  let t = (p - .50) / .32; t = Math.max(0, Math.min(1, t)); t = t * t * (3 - 2 * t);
   const sc = Math.max(cw / iw, ch / ih), sn = Math.min(cw / iw, ch / ih);
-  if (t > 0){
-    ctx.save(); ctx.globalAlpha = .55; ctx.filter = 'blur(24px)';
-    const sb = sc * 1.08; ctx.drawImage(img, (cw - iw * sb) / 2, (ch - ih * sb) / 2, iw * sb, ih * sb); ctx.restore();
-    const s = sc + (sn - sc) * t;
-    ctx.drawImage(img, (cw - iw * s) / 2, (ch - ih * s) / 2, iw * s, ih * s);
-  } else {
-    ctx.drawImage(img, (cw - iw * sc) / 2, (ch - ih * sc) / 2, iw * sc, ih * sc);
-  }
+  const s = sc + (sn - sc) * t;
+  ctx.fillStyle = '#070503'; ctx.fillRect(0, 0, cw, ch);
+  ctx.drawImage(img, (cw - iw * s) / 2, (ch - ih * s) / 2, iw * s, ih * s);
   current = n;
   beats.forEach((el, b) => { const on = (b === 0 && p < .25) || (b === 1 && p >= .25 && p < .52) || (b === 2 && p >= .52 && p < .80) || (b === 3 && p >= .80); el.classList.toggle('on', on); });
 }
